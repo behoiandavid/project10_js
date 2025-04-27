@@ -11,7 +11,6 @@ let isDragging = false;
 let startX = 0;
 let currentX = 0;
 let diffX = 0;
-let isAutoSliding = true;
 
 function showSlide(index) {
     if (index < 0) {
@@ -48,7 +47,7 @@ function updateIndicators() {
 
 function startAutoSlide() {
     slideInterval = setInterval(() => {
-        if (!isPaused && isAutoSliding) {
+        if (!isPaused) {
             showSlide(currentSlide + 1);
         }
     }, 2000);
@@ -56,6 +55,13 @@ function startAutoSlide() {
 
 function stopAutoSlide() {
     clearInterval(slideInterval);
+}
+
+function resetAutoSlide() {
+    stopAutoSlide(); 
+    if (!isPaused) {
+        startAutoSlide();
+    }
 }
 
 prevButton.addEventListener('click', () => {
@@ -79,8 +85,9 @@ pauseButton.addEventListener('click', () => {
     isPaused = !isPaused;
 });
 
-startAutoSlide();
 createIndicators();
+showSlide(currentSlide); 
+startAutoSlide(); 
 
 document.addEventListener('keydown', (e) => {
     stopAutoSlide(); 
@@ -91,16 +98,8 @@ document.addEventListener('keydown', (e) => {
         showSlide(currentSlide + 1);
     }
 
-    resetAutoSlide();
+    resetAutoSlide(); 
 });
-
-
-function resetAutoSlide() {
-    if (isAutoSliding) {
-        stopAutoSlide();
-        startAutoSlide();
-    }
-}
 
 let startXTouch;
 document.querySelector('.slider-container').addEventListener('touchstart', (e) => {
@@ -112,7 +111,7 @@ document.querySelector('.slider-container').addEventListener('touchmove', (e) =>
     if (!isDragging) return;
     const endX = e.touches[0].clientX;
     diffX = startXTouch - endX;
-    document.querySelector('.slider').style.transform = `translateX(-${currentSlide * 100}% - ${diffX}px)`; 
+    document.querySelector('.slider').style.transform = `translateX(-${currentSlide * 100}% - ${diffX}px)`;
 });
 
 document.querySelector('.slider-container').addEventListener('touchend', () => {
@@ -125,9 +124,8 @@ document.querySelector('.slider-container').addEventListener('touchend', () => {
     }
     isDragging = false;
     diffX = 0;
-    resetAutoSlide(); 
+    resetAutoSlide();
 });
-
 
 let startXMouse;
 document.querySelector('.slider-container').addEventListener('mousedown', (e) => {
@@ -139,7 +137,7 @@ document.querySelector('.slider-container').addEventListener('mousemove', (e) =>
     if (!isDragging) return;
     currentX = e.clientX;
     diffX = startXMouse - currentX;
-    document.querySelector('.slider').style.transform = `translateX(-${currentSlide * 100}% - ${diffX}px)`; 
+    document.querySelector('.slider').style.transform = `translateX(-${currentSlide * 100}% - ${diffX}px)`
 });
 
 document.querySelector('.slider-container').addEventListener('mouseup', () => {
@@ -153,7 +151,7 @@ document.querySelector('.slider-container').addEventListener('mouseup', () => {
     }
     isDragging = false;
     diffX = 0;
-    resetAutoSlide(); 
+    resetAutoSlide();
 });
 
 document.querySelector('.slider-container').addEventListener('mouseleave', () => {
